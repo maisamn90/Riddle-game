@@ -9,9 +9,10 @@ import pdb
 def save_user_score(user_name, score):
     print("Write")
     with open("data/users_score.txt", "a") as users_file:
-        users_file.write(user_name + "\n" + str(score) + "\n")
+        user_name = user_name.replace("Howdy ", "")
+        users_file.write(user_name + " " + str(score) + "\n")
         
-    
+ 
 
 def get_user_info():
     user_name = input("Please Inter your full name: ")
@@ -41,7 +42,7 @@ def check_word_exist(word):
             neat_words_list.append(i.rstrip())
         if word in neat_words_list:
             # print("neat_words_list " , neat_words_list)
-            print("check_word_exist True " + word)
+            # print("check_word_exist True " + word)
             return True
     
         else:
@@ -74,15 +75,16 @@ def scramble_word(selected_word):
             return word
             
 
-def check_user_input(user_answer_num, user_answer, scramble_selected_word, chances_counter, user_answers_list, user_name, game_over):
+def check_user_input(user_answer_num, user_answer, scramble_selected_word, chances_counter, user_answers_list, user_name):
     score = 0
     # chances_counter = 2
-    if(game_over == "true"):
-        save_user_score(user_name, len(user_answers_list))
+    # if(game_over == "true"):
+    #     save_user_score(user_name, len(user_answers_list))
     if user_answer_num == "0":
         if chances_counter != 0:
             print("user_answer= ", user_answer, "scramble_selected_word", scramble_selected_word )
             if check_word_exist(user_answer) == True and sorted(user_answer) == sorted(scramble_selected_word) :
+                print(sorted(user_answer) == sorted(scramble_selected_word), "sorted(user_answer) == sorted(scramble_selected_word) ")
                 print("222", scramble_selected_word)
                 # answer_num +=1
                 score +=1
@@ -91,6 +93,8 @@ def check_user_input(user_answer_num, user_answer, scramble_selected_word, chanc
                 # print("correct", "first_answer" , first_answer)
                 result = True
                 # break
+            elif sorted(user_answer) != sorted(scramble_selected_word):
+                result = False
             else:
                 if chances_counter != 0:
                     # chances_counter -=1

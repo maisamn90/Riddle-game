@@ -40,6 +40,9 @@
                         <span class="badge badge-pill badge-dark">Dark</span>
                     </div>
                 </div>
+                <div class="col-lg-12">
+                    <p>{{scores}}</p>
+                </div>
             </div>
         </div>
     </section>
@@ -116,13 +119,32 @@
             xhttp.open("POST", "{{url_for('show_selected_word')}}" + "?userlevel=" + user_level, true);
             xhttp.send();
         }
+
+        function game_over(chances_counter) {
+            var user_name = $(".username-display").text();
+            var game_is_over = false;
+            if (chances_counter == 0) {
+                game_is_over = true;
+
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+
+                    if (this.readyState == 4 && this.status == 200) {
+                        alert(this.responseText);
+                    }
+                };
+                xhttp.open("POST", "{{url_for('print_score')}}" + "?game_is_over=" + game_is_over + "&user_answers_list=" + user_answers_list.length + "&user_name=" + user_name, true);
+                xhttp.send();
+            }
+        }
+
+
         var chances_counter = 2;
 
         function check_user_answer() {
             var user_name = $(".username-display").text();
             var user_input = $("#user_input").val();
             var xhttp = new XMLHttpRequest();
-            localStorage.setItem("game_over", true);
             if (user_input == "") {
                 get_selected_word();
             }
@@ -134,14 +156,13 @@
                     alert(answer_num + "answer_num");
                 }
                 else { answer_num = 1; }
-                
+
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         var answer_resullt = this.responseText;
                         alert(typeof(answer_resullt) + " " + answer_resullt);
                         if (answer_num == 0) {
                             if (answer_resullt.replace('\n', '') == "true") {
-                                localStorage.setItem("game_over", false);
                                 alert("this must work");
                                 user_answers_list.push(user_input);
                                 alert(user_answers_list);
@@ -154,19 +175,22 @@
                                 $("#user_input").val("").focus();
 
                                 if (chances_counter == 1) {
+                                    alert(chances_counter + "chances_counter  1");
                                     $(".instruction").text("Answer not corret" + "Ure score is " + user_answers_list.length + "you have" + chances_counter + "chance(s)")
-                                    localStorage.setItem("game_over", false);
+                                    game_over(chances_counter);
                                 }
 
                                 if (chances_counter == 0) {
-                                    alert("chances_counter is here" + chances_counter)
+                                    alert("chances_counter is here" + chances_counter);
                                     $(".instruction").text("game over" + "Ure score is " + user_answers_list.length + "you have" + chances_counter + "chance(s)")
-                                    localStorage.setItem("game_over", true);
-                                    $("#start_game").removeClass("hide")
+                                    game_over(chances_counter);
+                                    $("#start_game").removeClass("hide");
                                     $(".instruction").css("margin-bottom", "12px");
                                     $(".scrambled-Letters").addClass("hide");
                                     $("#user_input").attr("disabled");
                                     user_answers_list = [];
+                                    alert("aaaaaaaaaaaaaaaaaaa");
+
                                 }
                             }
                         }
@@ -177,20 +201,18 @@
                                 $("#user_input").val("").focus()
 
                                 if (chances_counter == 1) {
-                                    $(".instruction").text("Answer not corret 2" + "Ure score is " + user_answers_list.length + "you have" + chances_counter + "chance(s)")
-                                    localStorage.setItem("game_over", false);
+                                    $(".instruction").text("Answer not corret 2" + "Ure score is " + user_answers_list.length + "you have" + chances_counter + "chance(s)");
+                                    game_over(chances_counter);
                                 }
 
                                 if (chances_counter == 0) {
                                     $(".instruction").text("game over 2" + "Ure score is " + user_answers_list.length + "you have" + chances_counter + "chance(s)")
-                                    localStorage.setItem("game_over", true);
+                                    game_over(chances_counter);
                                     $("#start_game").removeClass("hide")
                                     $(".instruction").css("margin-bottom", "12px");
                                     $(".scrambled-Letters").addClass("hide");
                                     $("#user_input").attr("disabled");
                                     user_answers_list = [];
-
-
                                 }
 
                             }
@@ -200,15 +222,14 @@
                                 $(".instruction").text("Correct " + "Ure score is " + user_answers_list.length);
                                 alert(user_answers_list);
                                 get_selected_word();
-                                localStorage.setItem("game_over", false);
                             }
-
 
                         }
                     }
                 };
             }
-            xhttp.open("POST", "{{url_for('check_user_answer')}}" + "?answer_num=" + answer_num + "&user_input=" + user_input + "&userlevel=" + user_level + "&scrambled_Letters=" + scrambled_Letters + "&chances_counter=" + chances_counter + "&user_answers_list=" + user_answers_list + "&user_name=" + user_name + "&game_over=" + localStorage.getItem("game_over"), true);
+
+            xhttp.open("POST", "{{url_for('check_user_answer')}}" + "?answer_num=" + answer_num + "&user_input=" + user_input + "&userlevel=" + user_level + "&scrambled_Letters=" + scrambled_Letters + "&chances_counter=" + chances_counter + "&user_answers_list=" + user_answers_list + "&user_name=" + user_name , true);
             xhttp.send();
         }
     </script>
