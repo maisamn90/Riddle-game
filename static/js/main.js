@@ -44,13 +44,3 @@ function user_answers(user_input) {
     return user_answers_list
 }
 
-
-// $("#userinfo-btn").click(function() {
-//     // var name = $("#username").val();
-//     // console.log("here");
-//     get_user_info();
-//     // $(".username-display").text("Howdy " + name);
-//     // $("#user_info_modal").modal('hide');
-//     // $("#user_info_form").submit();
-
-// });
