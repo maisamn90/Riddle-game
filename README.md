@@ -1,10 +1,11 @@
-   _____                                __     __         _       __                  __     
-  / ___/ _____ _____ ____ _ ____ ___   / /_   / /___     | |     / /____   _____ ____/ /_____
-  \__ \ / ___// ___// __ `// __ `__ \ / __ \ / // _ \    | | /| / // __ \ / ___// __  // ___/
- ___/ // /__ / /   / /_/ // / / / / // /_/ // //  __/    | |/ |/ // /_/ // /   / /_/ /(__  ) 
-/____/ \___//_/    \__,_//_/ /_/ /_//_.___//_/ \___/     |__/|__/ \____//_/    \__,_//____/  
-                                                                                             
-                                                                                             
+                 _____                                __     __         _       __                  __     
+                / ___/ _____ _____ ____ _ ____ ___   / /_   / /___     | |     / /____   _____ ____/ /_____
+                \__ \ / ___// ___// __ `// __ `__ \ / __ \ / // _ \    | | /| / // __ \ / ___// __  // ___/
+               ___/ // /__ / /   / /_/ // / / / / // /_/ // //  __/    | |/ |/ // /_/ // /   / /_/ /(__  ) 
+              /____/ \___//_/    \__,_//_/ /_/ /_//_.___//_/ \___/     |__/|__/ \____//_/    \__,_//____/  
+                                                                                                           
+                                                                                                           
+                                                                                                           
                                                                                              
 # Python practicals Mini Project - Scramble Words
 
@@ -69,7 +70,7 @@ Flask used to connect the game with the front end using JavaScript.
 * Get the user name and save it in a file user_info.txt
 * Start the game with generating random three litters words chosen from file created which have all possible anagram three letters words.
 * Mixing the word and letters to eliminate the possibility of showing the user a correct word.
-* let the user inter his answer and check the word as the following:
+* let the user enter his answer and check the word as the following:
 
    >a - check if the word is a correct word by finding it inside the words dictionary.
    >b - check the word if its matching the chosen letters 
