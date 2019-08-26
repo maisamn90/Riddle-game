@@ -11,7 +11,7 @@ def save_user_score(user_name, score):
     with open("data/users_score.txt", "a") as users_file:
         user_name = user_name.replace("Howdy ", "")
         user_name = user_name.replace(" ","_")
-        users_file.write(user_name + " " + str(score) + "\n")
+        users_file.write(user_name + "\n" + str(score) + "\n")
         
  
 
