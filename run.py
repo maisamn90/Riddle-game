@@ -7,34 +7,32 @@ from collections import OrderedDict
 from operator import itemgetter
 
 app = Flask(__name__)
+
+# initial index page
 @app.route('/', methods=["GET","POST"])
 def index():
-    # if request.method == "GET":
-        # file = open("user_info.txt", "a")
-        # file.write("name:{}\n".format(request.form['username']))
-        # file.close()
     return render_template("index.html")
 
+#to dispaly the user name and save it in a file 
 @app.route('/user', methods=["GET","POST"])
 def display_user():
     my_arg = request.args
     user = my_arg['username']
-    print(user, "test name")
     file = open("user_info.txt", "a")
     file.write("name:{}\n".format(user))
     file.close()
     return jsonify(user)
-    
+
+#to get the user level    
 @app.route('/userlevel', methods=["GET","POST"])
 def show_selected_word():
     selected_word_riddle = ""
     my_arg = request.args
     user_level = my_arg['userlevel']
-    print (user_level)
     selected_riddle_word = create_riddle(user_level)
-    print ("selected_riddle_word ",selected_riddle_word)
     return  jsonify(selected_riddle_word)
 
+#to get and check the user answer
 @app.route('/answer', methods=["GET","POST"])
 def check_user_answer():
     my_arg2 = request.args
@@ -49,6 +47,7 @@ def check_user_answer():
     answer_result = check_user_input(user_answer_num, user_answer, scramble_selected_word, chances_counter, user_answers_list, user_name)
     return  jsonify(answer_result)
 
+#to determine if the user loses the game and save the score
 @app.route('/game_over', methods=["GET","POST"])
 def print_score():
     my_arg3 = request.args
@@ -56,18 +55,18 @@ def print_score():
     user_name = my_arg3['user_name']
     score = my_arg3['user_answers_list']
     save_user_score(user_name, score)
-    print(my_arg3, "my_arg3")
     return  jsonify(game_is_over)
 
+#to determine if the user win the game and save the score
 @app.route('/game_winner', methods=["GET","POST"])
 def game_winner():
     my_arg4 = request.args
     user_name = my_arg4['user_name']
     score = my_arg4['user_answers_list']
     save_user_score(user_name, score)
-    print("game_winner")
     return  jsonify(score)
 
+# to print the top scores
 @app.route('/top_ten')
 def top_ten():
     count = 0
@@ -82,16 +81,10 @@ def top_ten():
                 scores.append(int(line))
                 count +=1
         scores, names = zip(*sorted(zip(scores, names)))
-        print(names, "names")  
-        print(scores, "scores")         
-        
         scores = list(scores)
         names = list(names)
-        print(names, scores)
-        
         dictionary = dict(zip(names, scores))
         dictionary = dict(OrderedDict(sorted(dictionary.items(), key = itemgetter(1), reverse = True)))
-        print(dictionary)
     
     return render_template("top_ten.html", content = dictionary)
 
