@@ -4,7 +4,7 @@ import json
 from main import *
 import numpy
 from collections import OrderedDict
-from operator import itemgetter    
+from operator import itemgetter
 
 app = Flask(__name__)
 @app.route('/', methods=["GET","POST"])
