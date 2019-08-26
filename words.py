@@ -13,18 +13,18 @@ def list_dec():
     return json_data_list
 
 def sort_words():
-    three_letters_words_list = []
+    # three_letters_words_list = []
     # four_letters_words_list = []
     # five_letters_words_list = []
     # six_letters_words_list = []
     # seven_letters_words_list = []
-    # eight_letters_words_list= []
+    eight_letters_words_list= []
     # nine_letters_words_list = []
     dec_list = list_dec()
     for actual_words in dec_list:
         actual_words = actual_words.replace("\n", "")
-        if len(actual_words) == 3:
-            three_letters_words_list.append(actual_words)
+        if len(actual_words) == 8:
+            eight_letters_words_list.append(actual_words)
         # elif len(words) == 4:
         #     four_letters_words_list.append(words)
         # elif len(words) == 5:
@@ -38,7 +38,7 @@ def sort_words():
         # elif len(words) == 9:
         #     nine_letters_words_list.append(words)
     
-    for words in three_letters_words_list:
+    for words in eight_letters_words_list:
         # print(words, three_letters_words_list, "whaaat")
         meaningful_list = []
         word_list = []
@@ -51,15 +51,15 @@ def sort_words():
         # meaningful_list = []
         if word_list:
             for every_word in word_list:
-                if every_word in three_letters_words_list:
+                if every_word in eight_letters_words_list:
                     # print("every_word", every_word)
                     meaningful_list.append(every_word)
                     meaningful_list = list(set(meaningful_list))
                     
-        if len(meaningful_list) > 3:
+        if len(meaningful_list) >= 3:
             print(meaningful_list, "meaningful_list")
             print("here")
-            with open("three_letters_meaning_words.json", "a") as file_json:
+            with open("data/eight_letters_meaning_words.json", "a") as file_json:
                 file_json.write(words + "\n")
     return True
                 

@@ -10,6 +10,7 @@ def save_user_score(user_name, score):
     print("Write")
     with open("data/users_score.txt", "a") as users_file:
         user_name = user_name.replace("Howdy ", "")
+        user_name = user_name.replace(" ","_")
         users_file.write(user_name + " " + str(score) + "\n")
         
  
@@ -63,6 +64,8 @@ def create_riddle(level):
         selected_word = pick_random_word("data/seven_letters_meaning_words.json")
     elif level == "6":
         selected_word = pick_random_word("data/eight_letters_meaning_words.json")
+    elif level == "7":
+        selected_word = pick_random_word("data/nine_letters_meaning_words.json")
     print(level, selected_word, "level")
     return selected_word        
 

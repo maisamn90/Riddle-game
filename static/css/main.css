@@ -88,7 +88,16 @@ body::before {
     background-color: #ffffffd4;
 }
 
-#start_game:hover{
+#start_game:hover {
     background-color: #17a2b8;
     color: #ffffff;
+}
+
+.navbar-text {
+    margin: 0;
+    padding: 0;
+}
+
+.score-link a{
+    color: #17a2b8;
 }

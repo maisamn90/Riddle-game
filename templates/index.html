@@ -20,13 +20,16 @@
     <header>
         <nav class="navbar navbar-transparent">
             <span class="navbar-brand mb-0 h1">Scramble Words</span>
-            <p class="navbar-text text-right username-display"></p>
+            <p class="navbar-text">
+                <span class=" text-right username-display"></span>
+                <a href="{{ url_for('top_ten') }}" class="navbar-text text-right">Top Scores</a>
+            </p>
         </nav>
     </header>
     <section class="content-body">
         <div class="container">
             <div class="row h-100 align-items-center">
-                <div class="col-md-12">
+                <div class="col-md-12 game-body">
                     <button type="button" id="start_game" class="btn btn-outline-info btn-lg btn-block" onclick="check_user_answer()">Start Game</button>
                     <p class="text-center instruction hide">Get Tow correct words from the following exact Letters</p>
                     <p class="scrambled-Letters text-center hide"></p>
@@ -37,11 +40,8 @@
                         </div>
                     </div>
                     <div class="tag-words">
-                        <span class="badge badge-pill badge-dark">Dark</span>
+
                     </div>
-                </div>
-                <div class="col-lg-12">
-                    <p>{{scores}}</p>
                 </div>
             </div>
         </div>
@@ -72,6 +72,32 @@
 
     <script type="text/javascript" src="{{ url_for('static',filename='js/main.js')}}"></script>
     <script type="text/javascript">
+        var user_input = document.getElementById("user_input");
+        user_input.addEventListener("keyup", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                if (document.getElementById("submit").hasAttribute("disabled")) {
+
+                }
+                else {
+                    document.getElementById("submit").click();
+                }
+            }
+        });
+        
+        var username = document.getElementById("username");
+        username.addEventListener("keyup", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                if (document.getElementById("userinfo-btn").hasAttribute("disabled")) {
+
+                }
+                else {
+                    document.getElementById("userinfo-btn").click();
+                }
+            }
+        });
+
         function get_user_info1() {
             var username = $("#username").val();
             var xhttp = new XMLHttpRequest();
@@ -90,7 +116,6 @@
         function get_user_level() {
             if (user_answers_list.length == 0) {
                 user_level = 1;
-                alert(typeof(user_level));
                 return user_level;
             }
             else {
@@ -130,10 +155,32 @@
                 xhttp.onreadystatechange = function() {
 
                     if (this.readyState == 4 && this.status == 200) {
-                        alert(this.responseText);
+                        var response_game = (this.responseText);
                     }
                 };
                 xhttp.open("POST", "{{url_for('print_score')}}" + "?game_is_over=" + game_is_over + "&user_answers_list=" + user_answers_list.length + "&user_name=" + user_name, true);
+                xhttp.send();
+            }
+        }
+
+        function game_wining(user_answers_list) {
+            var user_name = $(".username-display").text();
+            if (user_answers_list.length == 14) {
+                $(".instruction").text("Congratulations You Win" + " your score is ( " + user_answers_list.length + " )" ).css("font-size", "2rem");
+                $(".instruction").css("margin-bottom", "0");
+                $(".scrambled-Letters").addClass("hide")
+                $("#user_input").addClass("hide");
+                $("#submit").addClass("hide");
+                $(".tag-words").addClass("hide");
+                $(".game-body").append("<p class='text-center score-link '><strong><a href='{{ url_for('top_ten') }}'> Check your score</a></strong></p>");
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+
+                    if (this.readyState == 4 && this.status == 200) {
+                        var response_game = (this.responseText);
+                    }
+                };
+                xhttp.open("POST", "{{url_for('game_winner')}}" + "?&user_answers_list=" + user_answers_list.length + "&user_name=" + user_name, true);
                 xhttp.send();
             }
         }
@@ -142,6 +189,8 @@
         var chances_counter = 2;
 
         function check_user_answer() {
+
+            $(".instruction").text("Get Tow correct words from the following exact Letters").css("color", "#5d5d5d");
             var user_name = $(".username-display").text();
             var user_input = $("#user_input").val();
             var xhttp = new XMLHttpRequest();
@@ -149,24 +198,24 @@
                 get_selected_word();
             }
             else {
+                $("#submit").removeAttr("disabled");
                 var scrambled_Letters = $(".scrambled-Letters").text();
                 var answer_num = 0;
                 if (user_answers_list.length % 2 == 0) {
                     answer_num = 0;
-                    alert(answer_num + "answer_num");
                 }
                 else { answer_num = 1; }
 
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         var answer_resullt = this.responseText;
-                        alert(typeof(answer_resullt) + " " + answer_resullt);
                         if (answer_num == 0) {
                             if (answer_resullt.replace('\n', '') == "true") {
-                                alert("this must work");
                                 user_answers_list.push(user_input);
-                                alert(user_answers_list);
-                                $(".instruction").text("Add the second word now" + "Ure score is " + user_answers_list.length);
+                                $(".instruction").text("Great !! Add the second word now. " + "your score is ( " + user_answers_list.length + " )").css("color", "green");
+                                $("#user_input").val("").focus();
+                                $( ".tag-words" ).append( "<span class='badge badge-pill badge-dark'>" + user_input + "</span>" );
+                                game_wining(user_answers_list)
 
                             }
                             else {
@@ -175,21 +224,20 @@
                                 $("#user_input").val("").focus();
 
                                 if (chances_counter == 1) {
-                                    alert(chances_counter + "chances_counter  1");
-                                    $(".instruction").text("Answer not corret" + "Ure score is " + user_answers_list.length + "you have" + chances_counter + "chance(s)")
+                                    $(".instruction").text("Answer is not corret " + "your score is " + user_answers_list.length + "you have (" + chances_counter + ") chance(s)").css("color", "orange");
                                     game_over(chances_counter);
                                 }
 
                                 if (chances_counter == 0) {
-                                    alert("chances_counter is here" + chances_counter);
-                                    $(".instruction").text("game over" + "Ure score is " + user_answers_list.length + "you have" + chances_counter + "chance(s)")
+                                    $(".instruction").text("Game over" + " your score is ( " + user_answers_list.length + " ) you have (" + chances_counter + ") chance(s)").css("color", "red");
                                     game_over(chances_counter);
                                     $("#start_game").removeClass("hide");
                                     $(".instruction").css("margin-bottom", "12px");
                                     $(".scrambled-Letters").addClass("hide");
                                     $("#user_input").attr("disabled");
                                     user_answers_list = [];
-                                    alert("aaaaaaaaaaaaaaaaaaa");
+                                    $("#user_input").val("").focus();
+                                    chances_counter = 2;
 
                                 }
                             }
@@ -201,27 +249,30 @@
                                 $("#user_input").val("").focus()
 
                                 if (chances_counter == 1) {
-                                    $(".instruction").text("Answer not corret 2" + "Ure score is " + user_answers_list.length + "you have" + chances_counter + "chance(s)");
+                                    $(".instruction").text("Answer is not corret " + "your score is " + user_answers_list.length + "you have (" + chances_counter + ") chance(s)").css("color", "orange");
                                     game_over(chances_counter);
                                 }
 
                                 if (chances_counter == 0) {
-                                    $(".instruction").text("game over 2" + "Ure score is " + user_answers_list.length + "you have" + chances_counter + "chance(s)")
+                                    $(".instruction").text("Game over" + " your score is ( " + user_answers_list.length + " ) you have (" + chances_counter + ") chance(s)").css("color", "red");
                                     game_over(chances_counter);
                                     $("#start_game").removeClass("hide")
                                     $(".instruction").css("margin-bottom", "12px");
                                     $(".scrambled-Letters").addClass("hide");
                                     $("#user_input").attr("disabled");
                                     user_answers_list = [];
+                                    $("#user_input").val("").focus();
+                                    chances_counter = 2;
                                 }
 
                             }
                             else {
-                                alert("this must worked again");
                                 user_answers_list.push(user_input);
-                                $(".instruction").text("Correct " + "Ure score is " + user_answers_list.length);
-                                alert(user_answers_list);
+                                $(".instruction").text("Correct " + "your score is( " + user_answers_list.length + " )").css("color", "green");
+                                $("#user_input").val("").focus();
                                 get_selected_word();
+                                $( ".tag-words" ).append( "<span class='badge badge-pill badge-dark'>" + user_input + "</span>" );
+                                game_wining(user_answers_list)
                             }
 
                         }
@@ -229,7 +280,7 @@
                 };
             }
 
-            xhttp.open("POST", "{{url_for('check_user_answer')}}" + "?answer_num=" + answer_num + "&user_input=" + user_input + "&userlevel=" + user_level + "&scrambled_Letters=" + scrambled_Letters + "&chances_counter=" + chances_counter + "&user_answers_list=" + user_answers_list + "&user_name=" + user_name , true);
+            xhttp.open("POST", "{{url_for('check_user_answer')}}" + "?answer_num=" + answer_num + "&user_input=" + user_input + "&userlevel=" + user_level + "&scrambled_Letters=" + scrambled_Letters + "&chances_counter=" + chances_counter + "&user_answers_list=" + user_answers_list + "&user_name=" + user_name, true);
             xhttp.send();
         }
     </script>

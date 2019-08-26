@@ -2,6 +2,9 @@ import os
 from flask import Flask, render_template, request, flash, jsonify
 import json
 from main import *
+import numpy
+from collections import OrderedDict
+from operator import itemgetter    
 
 app = Flask(__name__)
 @app.route('/', methods=["GET","POST"])
@@ -56,28 +59,42 @@ def print_score():
     print(my_arg3, "my_arg3")
     return  jsonify(game_is_over)
 
+@app.route('/game_winner', methods=["GET","POST"])
+def game_winner():
+    my_arg4 = request.args
+    user_name = my_arg4['user_name']
+    score = my_arg4['user_answers_list']
+    save_user_score(user_name, score)
+    print("game_winner")
+    return  jsonify(score)
+
 @app.route('/top_ten')
 def top_ten():
-    scores = {}
-    all_scores = {}
-    my_list= []
+    count = 0
+    names= []
+    scores= []
     with open("data/users_score.txt", "r") as scores_file:
         for line in scores_file:
-            my_list.append(line.split())
-            my_list = sorted(my_list)
-            for key, val in my_list:
-                scores[i[0]] = i[1]
-                # if [i[0]] in scores and i[1]:
-            # if val    
-            # scores[key] = val
-            # all_scores = scores
-            # print(scores, "scores") 
-            # print(all_scores, "scores") 
-            # print(my_list)
-    print(scores, "scores")
+            if count % 2== 0:
+                names.append(line.rstrip())
+                count +=1
+            else:
+                scores.append(int(line))
+                count +=1
+        scores, names = zip(*sorted(zip(scores, names)))
+        print(names, "names")  
+        print(scores, "scores")         
+        
+        scores = list(scores)
+        names = list(names)
+        print(names, scores)
+        
+        dictionary = dict(zip(names, scores))
+        dictionary = dict(OrderedDict(sorted(dictionary.items(), key = itemgetter(1), reverse = True)))
+        print(dictionary)
     
-    return scores
-
+    return render_template("top_ten.html", content = dictionary)
+# print(top_ten())
 if __name__ == '__main__':
     app.run(host=os.environ.get('IP'),
             port=int(os.environ.get('PORT')),
